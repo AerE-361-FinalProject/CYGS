@@ -1,0 +1,144 @@
+\documentclass[12pt]{article}
+\renewcommand{\thesection}{\Roman{section}} 
+\renewcommand{\thesubsection}{\thesection.\Roman{subsection}}
+\usepackage[tocindentauto]{tocstyle}
+%\usetocstyle{KOMAlike} %the previous line resets it
+\usepackage{natbib}
+\usepackage{url}
+\usepackage[utf8x]{inputenc}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\graphicspath{{images/}}
+\usepackage{parskip}
+\usepackage{fancyhdr}
+\usepackage{vmargin}
+\setmarginsrb{3 cm}{2.5 cm}{3 cm}{2.5 cm}{1 cm}{1.5 cm}{1 cm}{1.5 cm}
+\usepackage{appendix}
+\usepackage{listings} % For code importing
+\usepackage{xcolor} % for setting colors
+\input{arduinoLanguage.tex}  
+
+%\makeatletter
+%\let\thetitle\@title
+
+%\let\thedate\@date
+%\makeatother
+
+%\pagestyle{fancy}
+%\fancyhf{}
+%\rhead{\theauthor}
+%\lhead{\thetitle}
+%\cfoot{\thepage}
+
+\begin{document}
+\title{Project Proposal}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{titlepage}
+	\centering
+    \vspace*{0.5 cm}
+    \includegraphics[scale = 0.11]{isu_seal.png}\\[1.0 cm]	% University Logo
+    \textsc{\LARGE IOWA STATE UNIVERSITY}\\[2.0 cm]
+    \textsc{\large AEROSPACE ENGINEERING DEPARTMENT}\\[0.2 cm]
+    \textsc{\large Computational Techniques for Aerospace Design}\\[0.2 cm]
+	\textsc{\Large AERE 361}\\[0.5 cm]				% Course Code
+	\textsc{\Large Project Proposal}\\[0.2 cm]
+	\textsc{\Large TEAM NAME HERE}\\[0.2 cm]
+	\rule{\linewidth}{0.2 mm} \\[0.4 cm]
+	%{ \huge \bfseries \thetitle}\\
+	
+	
+	\begin{minipage}{0.8\textwidth}
+		
+			\begin{flushleft} 
+			\emph{Team Member Names :} \\
+			Last Name, First Name\linebreak
+			Last Name, First Name\linebreak
+			Last Name, First Name\linebreak
+			Last Name, First Name\linebreak
+			Last Name, First Name\linebreak
+			Last Name, First Name\linebreak
+			
+		\end{flushleft}
+	\end{minipage}\\[2 cm]
+	
+	\vfill
+	
+\end{titlepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\maketitle
+\tableofcontents
+\pagebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{ABSTRACT}
+This is your abstract.  It is a short summary of what your proposal will cover.  You should keep your abstract to 250 words or less.  Use this to ``hook in'' your reader.
+
+\section{INTRODUCTION}
+Introduce your project.  Brief summary of what you are proposing that it does and why.  Should be 1-2 paragraphs.
+
+\section{FEATURES}
+List here all the features that you propose your device has.  You should have at least 3 key features.  More can be added if needed.
+
+
+% Below is an example of inserting an image.  Not that LaTex
+% will determine the best location for the image.  Make sure
+% you replace this image with yours and place a proper caption.
+% You can use the \label{name} to name the figure and then reference
+% it from your writeup and LaTeX will autmatically give it the correct
+% number. 
+\begin{figure}[!t]
+\centering
+\includegraphics[width=4.5in]{cpx01.jpg}
+\caption{This is the circuit playground express}
+\label{fig:cpx}
+\end{figure}
+
+\section{PROBLEM STATEMENT}
+Here you will go into more detail on what problem you hope to solve or address.  You should discuss what the problem is and why it is important to solve it.
+
+You will need to cite at least one source for backing up what you are trying to do or solve with your project.  I would suggest looking at Adafruit (which you can cite).  Of course you can also search for and cite any other publication.  I would recommend either using the ISU library or you can use Google Scholar.  You will need to add to the ref.bib file found in this template.  Once you do that, cite them like this \cite{einstein} or this \cite{dirac}.
+
+\section{PROBLEM SOLUTION}
+Here go over on your approach to your solution.  You must include at least one image that shows your concept.  This can be a sketch or drawing or some pictures that shows your concept.  Make sure you reference the image(s) like this - Figure \ref{fig:cpx}.  Finally, make sure you replace the stock image we included.  
+
+You can also include any pseudo code or any code snippets you have gathered so far.  If you want to embed code into \LaTeX, you can use the example below on how to do this in \LaTeX.
+
+\begin{lstlisting}[language=Arduino]
+#include <Adafruit_CircuitPlayground.h>
+
+void setup() {
+  CircuitPlayground.begin();
+}
+
+void loop() {
+  CircuitPlayground.clearPixels();
+
+  delay(500);
+
+  CircuitPlayground.setPixelColor(0, 255,   0,   0);
+  CircuitPlayground.setPixelColor(1, 128, 128,   0);
+  CircuitPlayground.setPixelColor(2,   0, 255,   0);
+  CircuitPlayground.setPixelColor(3,   0, 128, 128);
+  CircuitPlayground.setPixelColor(4,   0,   0, 255);
+  
+  CircuitPlayground.setPixelColor(5, 0xFF0000);
+  CircuitPlayground.setPixelColor(6, 0x808000);
+  CircuitPlayground.setPixelColor(7, 0x00FF00);
+  CircuitPlayground.setPixelColor(8, 0x008080);
+  CircuitPlayground.setPixelColor(9, 0x0000FF);
+ 
+  delay(5000);
+}
+\end{lstlisting}
+
+\section{CONCLUSION}
+Finally, wrap up your proposal.
+
+\newpage
+
+\bibliographystyle{plain}
+\bibliography{ref}
+
+\end{document}
