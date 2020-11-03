@@ -1,10 +1,11 @@
 #include <Adafruit_NeoPixel.h>
 #include <Adafruit_CircuitPlayground.h>
 #include <time.h>
+#include <Arduino.h>
 void setup() {
   // put your setup code here, to run once:
   CircuitPlayground.begin(); //Needed for the Circuit Playground library
-  srand(time(NULL));
+  randomSeed(analogRead(0));
 }
 int audioGame(){
   //This will contain the finished audio game
@@ -16,19 +17,28 @@ int audioGame(){
   int life = 1;
   int num;
   for(i = 0; i < 8; i++){ //A loop to randomly play 8 high or low notes
-    num = rand() % 100;
-    if(num < 40){
-      test[i] = 0;
-      CircuitPlayground.playTone(294,100);
+    if(CircuitPlayground.lightSensor() < 40 && !CircuitPlayground.getAccelTap()){
+      num = random(1,100);
+      if(num < 50){
+        test[i] = 0;
+        CircuitPlayground.playTone(294,100);
+      }else{
+        test[i] = 1;
+        CircuitPlayground.playTone(440,100);
+      }
+      delay(500);
     }else{
-      test[i] = 1;
-      CircuitPlayground.playTone(440,100);
+      return 1;
     }
-    delay(500);
   }
+  
   for(i = 0; i < 8; i++){
     while(!CircuitPlayground.leftButton() && !CircuitPlayground.rightButton()){
       //J chillin' until you hit a button
+      if(CircuitPlayground.lightSensor() < 40 && !CircuitPlayground.getAccelTap()){
+      }else{
+        return 1;
+      }
     }
     if(CircuitPlayground.leftButton()){
       guess[i] = 0;
@@ -66,9 +76,17 @@ void boom(){
   }
   }
 }
-int wires(){
-  //This will contain the code for the wire game
-  //TODO: Write the code for this game
+int reset(){
+  //This will contain the code to restart the game
+  //Initial delay to give the player time after turning on the chip
+  CircuitPlayground.clearPixels();
+  delay(100);
+  for(i = 0; i < 10; i++){
+  }
+  for(i = 0; i < 10; i++){//10 second countdown shown by blue lights
+    delay(1000);
+    CircuitPlayground.setPixelColor(i,0,0,0);
+  }
 }
 void loop() {
   // put your main code here, to run repeatedly:
@@ -76,15 +94,9 @@ void loop() {
   //More functions will likely be needed, but this will give us a general start
   int i; //Counter
   int check; //Used as a return value to check if the player should move on or the bomb explodes
-  //Initial delay to give the player time after turning on the chip
-  for(i = 0; i < 10; i++){
     CircuitPlayground.setPixelColor(i,0,0,255);
-  }
-  for(i = 0; i < 10; i++){//10 second countdown shown by blue lights
-    delay(1000);
-    CircuitPlayground.setPixelColor(i,0,0,0);
-  }
+
   //So it begins
-  //Start checking the light sensor
-  //TODO: Figure out how to run timer and light sensor check in parallel with everything else
+  //TODO: Figure out how to run timer and in parallel with everything else
+  //Use switch statement as shown in the example code
 }

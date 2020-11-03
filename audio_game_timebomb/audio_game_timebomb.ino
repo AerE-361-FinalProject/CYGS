@@ -1,10 +1,11 @@
 #include <Adafruit_NeoPixel.h>
 #include <Adafruit_CircuitPlayground.h>
 #include <time.h>
+#include <Arduino.h>
 void setup() {
   // put your setup code here, to run once:
   CircuitPlayground.begin();
-  srand(time(NULL));
+  randomSeed(analogRead(0));
 }
 
 void loop() {
@@ -16,8 +17,8 @@ void loop() {
   int life = 1;
   int num;
   for(i = 0; i < 8; i++){ //A loop to randomly play 8 high or low notes
-    num = rand() % 100;
-    if(num < 40){
+    num = random(0,100);
+    if(num < 50){
       test[i] = 0;
       CircuitPlayground.playTone(294,100);
     }else{
