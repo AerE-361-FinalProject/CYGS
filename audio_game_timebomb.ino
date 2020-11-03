@@ -1,24 +1,23 @@
-#include <Adafruit_CircuitPlayground.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
 #include <Adafruit_NeoPixel.h>
+#include <Adafruit_CircuitPlayground.h>
+#include <time.h>
 void setup() {
   // put your setup code here, to run once:
   CircuitPlayground.begin();
+  srand(time(NULL));
+}
+
+void loop() {
+  // put your main code here, to run repeatedly:
   int i,j; //Counters
   int test[8];
   int guess[8];
   int rand_num;
   int life = 1;
-  srand(time(0));
-}
-}
-void loop() {
-  // put your main code here, to run repeatedly:
+  int num;
   for(i = 0; i < 8; i++){ //A loop to randomly play 8 high or low notes
     num = rand() % 100;
-    if(num < 50){
+    if(num < 40){
       test[i] = 0;
       CircuitPlayground.playTone(294,100);
     }else{
@@ -34,9 +33,9 @@ void loop() {
     if(CircuitPlayground.leftButton()){
       guess[i] = 0;
     }else if(CircuitPlayground.rightButton()){
-      guess[i] = 0;
+      guess[i] = 1;
     }
-    delay(500);
+    delay(200);
   }
   for(i = 0; i < 8; i++){ //Checks the players guesses
     if(test[i] != guess[i]){
