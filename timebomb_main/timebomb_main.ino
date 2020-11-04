@@ -2,10 +2,19 @@
 #include <Adafruit_CircuitPlayground.h>
 #include <time.h>
 #include <Arduino.h>
+
+#define INITIAL = 0; //Timer begins
+#define AUDIOGAME = 1; //Playing the audio game, stored in a function
+#define OPEN = 2; //Box is opened, player now needs to press a button to recieve their instructions
+#define WIRES_1 = 3; //Player is removing the wires
+#define WIRES_2 = 4; //Player is reattaching the wires
+#define WIN = 5; //Player has won
+int state;
 void setup() {
   // put your setup code here, to run once:
   CircuitPlayground.begin(); //Needed for the Circuit Playground library
   randomSeed(analogRead(0));
+  reset();
 }
 int audioGame(){
   //This will contain the finished audio game
@@ -74,9 +83,9 @@ void boom(){
     CircuitPlayground.clearPixels();
     delay(500);
   }
-  }
+  reset();
 }
-int reset(){
+void reset(){
   //This will contain the code to restart the game
   //Initial delay to give the player time after turning on the chip
   CircuitPlayground.clearPixels();
@@ -87,16 +96,48 @@ int reset(){
     delay(1000);
     CircuitPlayground.setPixelColor(i,0,0,0);
   }
+  state = INITIAL;
+}
+void youwin(){
+  //This code runs if you win the game
+  while(!CircuitPlayground.leftButton() && !CircuitPlayground.rightButton()){
+    for(i = 0; i < 10; i++){
+      CircuitPlayground.setPixelColor(i,0,255,0);
+    }
+    delay(500); //Flashes green until player hits a button to restart the game.
+    CircuitPlayground.clearPixels();
+    delay(500);
+  }
+  reset();
 }
 void loop() {
   // put your main code here, to run repeatedly:
   //This will be the main game, use this for control flow of the game itself
   //More functions will likely be needed, but this will give us a general start
   int i; //Counter
-  int check; //Used as a return value to check if the player should move on or the bomb explodes
-    CircuitPlayground.setPixelColor(i,0,0,255);
-
-  //So it begins
-  //TODO: Figure out how to run timer and in parallel with everything else
-  //Use switch statement as shown in the example code
+  int check; //
+  switch(state){
+    case(INITIAL){
+      //Begin timer
+      state = AUDIOGAME;
+      break;
+    }
+    case(AUDIOGAME){
+      check = audioGame();
+      if(check == 0){
+        state = OPEN;
+      }else{
+        boom();
+      }
+      break;
+    }
+    case(OPEN){
+      while(!CircuitPlayground.leftButton() && !CircuitPlayground.rightButton()){
+        if(CircuitPlayground.getAccelTap()){
+          boom();
+        }
+      }
+      break;
+    }
+  }
 }
