@@ -9,21 +9,23 @@
 #define OPEN  2 //Box is opened, player now needs to press a button to recieve their instructions
 #define WIRES_1  3 //Player is removing the wires
 #define WIRES_2  4 //Player is reattaching the wires
-//#define WIN  5; //Player has won
-
-
+#define CapLimit 750
+#define Red 3
+#define Yellow 2
+#define Green 0
+#define White 1
 
 int state;
 int wirestate = 0;
 int order[4];
-int wires[4] = {10,9,0,1}; //RED,YELLOW,GREEN,WHITE
+int wires[4] = {3,2,0,1}; //RED,YELLOW,GREEN,WHITE
 int i,j;
 void setup() {
   // put your setup code here, to run once:
   CircuitPlayground.begin(); //Needed for the Circuit Playground library
   randomSeed(analogRead(9));
-  pinMode(10,INPUT);
-  pinMode(9,INPUT);
+  pinMode(3,INPUT);
+  pinMode(2,INPUT);
   pinMode(0,INPUT);
   pinMode(1,INPUT);
   pinMode(13,OUTPUT);
@@ -31,7 +33,7 @@ void setup() {
   reset();
 }
 void timeLoop(){
-  delay(10000);
+  delay(7000);
   if(j == 9){
     CircuitPlayground.setPixelColor(j,0,0,0);
     boom();
@@ -40,6 +42,13 @@ void timeLoop(){
   }else{
     CircuitPlayground.setPixelColor(j,0,0,0);
     j++;
+  }
+}
+boolean capButton(int pad){
+  if(CircuitPlayground.readCap(pad) > CapLimit){
+    return true;
+  }else{
+    return false;
   }
 }
 void boom(){
@@ -157,14 +166,17 @@ void loop() {
       break;
     case WIRES_1:
       //Get the random sequence of wires
-      num = (int) random(0,3);
-      order[0] = wires[num];
+      
+      switch(wirestate){
+        case 0: //Blinks the order
+          num =  random(4);
+         order[0] = wires[num];
       while(wires[num] == order[0]){
-        num = (int) random(0,3);
+        num =  random(4);
       }
       order[1] = wires[num];
       while(wires[num] == order[0] || wires[num] == order[1]){
-        num = (int) random(0,3);
+        num =  random(4);
       }
       order[2] = wires[num];
       for(i = 0; i < 4; i++){
@@ -172,86 +184,72 @@ void loop() {
           order[3] = wires[i];    
         }
       }
-      switch(wirestate){
-        case 0: //Blinks the order
           for(i = 0; i < 4; i++){
-            if(order[i] == wires[0]){ //RED
+            if(order[i] == 3){ //RED
               CircuitPlayground.setPixelColor(0,255,0,0);
               delay(500);
               CircuitPlayground.setPixelColor(0,0,0,0);
-            }else if(order[i] == wires[1]){ //YELLOW
+            }else if(order[i] == 2){ //YELLOW
               CircuitPlayground.setPixelColor(0,255,255,0);
               delay(500);
               CircuitPlayground.setPixelColor(0,0,0,0);            
-            }else if(order[i] == wires[2]){
+            }else if(order[i] == 0){
               CircuitPlayground.setPixelColor(0,0,255,0);
               delay(500);
               CircuitPlayground.setPixelColor(0,0,0,0);              
-            }else{
+            }else if(order[i] == 1){
               CircuitPlayground.setPixelColor(0,255,255,255);
               delay(500);
               CircuitPlayground.setPixelColor(0,0,0,0);            
+            }else{
+              CircuitPlayground.setPixelColor(0,255,0,255);
+              delay(500);
+              CircuitPlayground.setPixelColor(0,0,0,0);
             }
           }
           wirestate = 1;
           break;
         case 1://Now check to see if wires are removed in the correct order
-          for(i = 0; i < wirestate; i++){
-            CircuitPlayground.setPixelColor(0,255,0,0);
             delay(500);
-            CircuitPlayground.setPixelColor(0,0,0,0);  
-            delay(500);
-          }
           if(wirestate1(order)){
-            delay(50);
+            delay(250);
           }else if(wirestate2(order)){
             wirestate = 2;
+            delay(250);
           }else{
             boom();
           }
           break;
         case 2:
-          for(i = 0; i<wirestate; i++){
-            CircuitPlayground.setPixelColor(0,255,255,0);
             delay(500);
-            CircuitPlayground.setPixelColor(0,0,0,0); 
-            delay(500);
-          }
           if(wirestate2(order)){
-            delay(50);
+            delay(250);
           }else if(wirestate3(order)){
             wirestate = 3;
+            delay(250);
           }else{
             boom();
           }
           break;
         case 3:
-          for(i = 0; i<wirestate; i++){
-            CircuitPlayground.setPixelColor(0,255,255,255);
             delay(500);
-            CircuitPlayground.setPixelColor(0,0,0,0); 
-            delay(500);
-          }
           if(wirestate3(order)){
-            delay(50);
+            delay(250);
           }else if(wirestate4(order)){
             wirestate = 4;
+            delay(250);
           }else{
             boom();
           }
           break;
         case 4:
-          for(i = 0; i<wirestate; i++){
-            CircuitPlayground.setPixelColor(0,0,255,0);
             delay(500);
-            CircuitPlayground.setPixelColor(0,0,0,0); 
-            delay(500);
-          }
           if(wirestate4(order)){
-            delay(50);
+            delay(250);
           }else if(wirestate5(order)){
             wirestate = 0;
             state = WIRES_2;
+            delay(250);
           }else{
             boom();
           }
@@ -259,75 +257,92 @@ void loop() {
       }
       break;
     case WIRES_2:
-      num = (int) random(0,3); //Same as WIRES_1, but in reverse order
-      order[3] = wires[num];
-      while(wires[num] == order[0]){
-        num = (int) random(0,3);
-      }
-      order[2] = wires[num];
-      while(wires[num] == order[0] || wires[num] == order[1]){
-        num = (int) random(0,3);
-      }
-      order[1] = wires[num];
-      for(i = 0; i < 4; i++){
-        if(wires[i] != order[0] && wires[i] != order[1] && wires[i] != order[2]){
-          order[0] = wires[i];    
-        }
-      }    
       switch(wirestate){
         case 0:  //Blinks the order, in backwards order
-          for(i = 3; i > -1; i--){
-            if(order[i] == wires[0]){ //RED
+          CircuitPlayground.setPixelColor(0,0,0,0);
+          while(!CircuitPlayground.leftButton() && !CircuitPlayground.rightButton()){
+            delay(50);
+           }
+           randomSeed(analogRead(10));
+        num =  random(4);
+         order[0] = wires[num];
+      while(wires[num] == order[0]){
+        num =  random(4);
+      }
+      order[1] = wires[num];
+      while(wires[num] == order[0] || wires[num] == order[1]){
+        num =  random(4);
+      }
+      order[2] = wires[num];
+      for(i = 0; i < 4; i++){
+        if(wires[i] != order[0] && wires[i] != order[1] && wires[i] != order[2]){
+          order[3] = wires[i];    
+        }
+      }
+          for(i = 0; i < 4; i++){
+            if(order[3-i] == 3){ //RED
               CircuitPlayground.setPixelColor(0,255,0,0);
               delay(500);
               CircuitPlayground.setPixelColor(0,0,0,0);
-            }else if(order[i] == wires[1]){ //YELLOW
+            }else if(order[3-i] == 2){ //YELLOW
               CircuitPlayground.setPixelColor(0,255,255,0);
               delay(500);
               CircuitPlayground.setPixelColor(0,0,0,0);             
-            }else if(order[i] == wires[2]){ //Green
+            }else if(order[3-i] == 0){ //Green
               CircuitPlayground.setPixelColor(0,0,255,0);
               delay(500);
               CircuitPlayground.setPixelColor(0,0,0,0);              
-            }else{ //White
+            }else if(order[3-i] == 1){ //White
               CircuitPlayground.setPixelColor(0,255,255,255);
               delay(500);
               CircuitPlayground.setPixelColor(0,0,0,0);              
+            }else{
+              CircuitPlayground.setPixelColor(0,255,0,255);
+              delay(500);
+              CircuitPlayground.setPixelColor(0,0,0,0); 
             }
           }
           wirestate = 1;
           break;
         case 1: //Now check to see if wires are removed in the correct order
           //Because we reversed the order vector, the code is identical.
+            delay(500);
           if(wirestate5(order)){
-            delay(50);
+            delay(250);
           }else if(wirestate4(order)){
             wirestate = 2;
+            delay(250);
           }else{
             boom();
           }
           break;
         case 2:
+            delay(500);
           if(wirestate4(order)){
-            delay(50);
+            delay(250);
           }else if(wirestate3(order)){
             wirestate = 3;
+            delay(250);
           }else{
             boom();
           }
           break;
         case 3:
+            delay(500);
           if(wirestate3(order)){
-            delay(50);
+            delay(250);
           }else if(wirestate2(order)){
             wirestate = 4;
+            delay(250);
           }else{
             boom();
           }
           break;
         case 4:
+            delay(500);
+            CircuitPlayground.setPixelColor(0,255,0,0);
           if(wirestate2(order)){
-            delay(50);
+            delay(250);
           }else if(wirestate1(order)){
             youwin();
           }else{
@@ -339,36 +354,36 @@ void loop() {
       }        
   }
 
-bool wirestate1(int order[4]){
-  if(digitalRead(order[0]) == 1 && digitalRead(order[1]) == 1 && digitalRead(order[2]) == 1 && digitalRead(order[3]) == 1){
+bool wirestate1(int order[]){
+  if(capButton(order[0]) && capButton(order[1]) && capButton(order[2]) && capButton(order[3])){
     return true;
   }else{
     return false;
   }
 }
-bool wirestate2(int order[4]){
-  if(!digitalRead(order[0]) == 1 && digitalRead(order[1]) == 1 && digitalRead(order[2]) == 1 && digitalRead(order[3]) == 1){
+bool wirestate2(int order[]){
+  if(!capButton(order[0]) && capButton(order[1])&& capButton(order[2]) && capButton(order[3])){
     return true;
   }else{
     return false;
   }
 }
-bool wirestate3(int order[4]){
-  if(!digitalRead(order[0]) && !digitalRead(order[1]) && digitalRead(order[2]) && digitalRead(order[3])){
+bool wirestate3(int order[]){
+  if(!capButton(order[0]) && !capButton(order[1]) && capButton(order[2]) && capButton(order[3])){
     return true;
   }else{
     return false;
   }
 }
-bool wirestate4(int order[4]){
-  if(!digitalRead(order[0]) && !digitalRead(order[1]) && !digitalRead(order[2]) && digitalRead(order[3])){
+bool wirestate4(int order[]){
+  if(!capButton(order[0]) && !capButton(order[1]) && !capButton(order[2]) && capButton(order[3])){
     return true;
   }else{
     return false;
   }
 }
-bool wirestate5(int order[4]){
-  if(!digitalRead(order[0]) && !digitalRead(order[1]) && !digitalRead(order[2]) && !digitalRead(order[3])){
+bool wirestate5(int order[]){
+  if(!capButton(order[0]) && !capButton(order[1]) && !capButton(order[2]) && !capButton(order[3])){
     return true;
   }else{
     return false;
