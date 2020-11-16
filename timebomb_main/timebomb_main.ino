@@ -9,7 +9,7 @@
 #define OPEN  2 //Box is opened, player now needs to press a button to recieve their instructions
 #define WIRES_1  3 //Player is removing the wires
 #define WIRES_2  4 //Player is reattaching the wires
-#define CapLimit 750
+#define CapLimit 1000
 #define Red 3
 #define Yellow 2
 #define Green 0
@@ -126,7 +126,7 @@ void loop() {
         test[i] = 1;
         CircuitPlayground.playTone(440,100);
       }
-      delay(500);
+      delay(400);
     }else{
       boom();
     }
